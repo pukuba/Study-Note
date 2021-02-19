@@ -1,0 +1,28 @@
+{
+  "name": "study-note",
+  "version": "1.0.0",
+  "description": "Node.js GRPC Note",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "NODE_PATH=src/ nodemon --exec ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pukuba/Study-Note.git"
+  },
+  "author": "pukuba",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pukuba/Study-Note/issues"
+  },
+  "homepage": "https://github.com/pukuba/Study-Note#readme",
+  "dependencies": {
+    "grpc": "^1.24.5",
+    "mongodb": "^3.6.4",
+    "nodemon": "^2.0.7"
+  },
+  "devDependencies": {
+    "@types/mongodb": "^3.6.8"
+  }
+}
