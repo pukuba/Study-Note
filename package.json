@@ -22,7 +22,9 @@
   "homepage": "https://github.com/pukuba/Study-Note#readme",
   "dependencies": {
     "@grpc/grpc-js": "^1.2.8",
+    "@types/cors": "^2.8.10",
     "@types/express": "^4.17.11",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "google-protobuf": "^3.15.0",
     "grpc-tools": "^1.10.0",

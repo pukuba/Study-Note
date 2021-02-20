@@ -3,33 +3,45 @@ import { ParamsDictionary } from "express-serve-static-core"
 import { BFFPort } from "config/env"
 import { list, insert } from "client/rpc"
 import { noteParams } from "config/types"
+import cors from "cors"
+import bodyParser from "body-parser"
 const app = express()
-
+app.use(cors())
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 app.get("/", ({ }, res) => {
     res.json({ health: "ok" })
 })
 
 app.get<ParamsDictionary, any, any, void>(
     "/list",
-    async (request, response) => {
-
+    async (req, res) => {
         try {
             const result = await list()
-            response.json({ result })
+            return res.json({ result })
         } catch (error) {
-            response.status(500).json({ error })
+            return res.status(500).json({ error })
         }
     }
 )
 
-app.get<ParamsDictionary, any, any, noteParams>(
+app.post<ParamsDictionary, any, any, noteParams>(
     "/insert",
-    async (request, response) => {
+    async (req, res) => {
+        if (req.body.name === undefined || req.body.title === undefined || req.body.content === undefined) {
+            return res.status(400).json({
+                error: "invalid input"
+            })
+        }
         try {
-            const result = await insert({ ...request.query })
-            response.json({ result })
+            const result = await insert({
+                name: req.body.name,
+                title: req.body.title,
+                content: req.body.content
+            })
+            return res.json({ result })
         } catch (error) {
-            response.status(500).json({ error })
+            return res.status(500).json({ error })
         }
     }
 )

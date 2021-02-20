@@ -3,6 +3,7 @@ import { NoteServiceClient } from "gen/proto/notes_grpc_pb"
 import { credentials } from "@grpc/grpc-js"
 import { grpcClientOptions, port } from "config/env"
 import { noteParams } from "config/types"
+import { nodeModuleNameResolver } from "typescript"
 const serverURL = `localhost:${port}`
 
 const empty = new Empty()
@@ -29,12 +30,15 @@ export const list = () => {
 }
 
 export const insert = ({ name, content, title }: noteParams) => {
-    const req = new NoteArgs()
+    const note = new NoteArgs()
+    note.setName(name)
+    note.setTitle(title)
+    note.setContent(content)
     return new Promise((resolve, reject) => {
-        Client.insert(req, (error, response) => {
-            if (error) {
+        Client.insert(note, (error, response) => {
+            if (error || response === undefined) {
                 console.error(error)
-                reject({
+                return reject({
                     code: error?.code || 500,
                     message: error?.message || "something went wrong"
                 })
