@@ -13,7 +13,8 @@ const server = new Server()
 server.addService(NoteServiceService, {
     list: rpc.list,
     insert: rpc.insert,
-    update: rpc.update
+    update: rpc.update,
+    get: rpc.get
 })
 
 server.bindAsync('127.0.0.1:50051', ServerCredentials.createInsecure(), (error, port) => {

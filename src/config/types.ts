@@ -19,3 +19,7 @@ export type noteParams = {
     id: string
     content: string
 }
+
+export type getParams = {
+    id: string
+}

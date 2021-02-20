@@ -4,7 +4,7 @@ import {
 } from "@grpc/grpc-js"
 
 import DB from "config/connectDB"
-import { Empty, Note, NoteArgs, NoteList } from "gen/proto/notes_pb"
+import { Empty, Note, NoteArgs, NoteList, NoteRequestId } from "gen/proto/notes_pb"
 import { noteType } from "config/types"
 import { ObjectId } from "mongodb"
 
@@ -59,7 +59,6 @@ export default {
                 message: "not valid id"
             })
         }
-        console.log(post)
         await db.collection("post").updateOne({ _id: post._id }, {
             $set: {
                 title: call.request.getTitle() || post.title,
@@ -71,6 +70,25 @@ export default {
         resultNote.setTitle(call.request.getTitle() || post.title)
         resultNote.setName(call.request.getName() || post.name)
         resultNote.setContent(call.request.getContent() || post.content)
+        return callback(null, resultNote)
+    },
+    get: async (call: ServerUnaryCall<NoteRequestId, Note>, callback: sendUnaryData<Note>) => {
+        const db = await DB.get()
+        if (call.request.getId() === undefined) {
+            return callback({
+                code: 400,
+                message: "empty id"
+            })
+        }
+        const post = await db.collection("post").findOne({ _id: new ObjectId(call.request.getId()) })
+        const resultNote = new Note()
+        if (post === null) {
+            return callback(null, resultNote)
+        }
+        resultNote.setId(post._id + "")
+        resultNote.setTitle(post.title)
+        resultNote.setName(post.name)
+        resultNote.setContent(post.content)
         return callback(null, resultNote)
     }
 }
