@@ -4,11 +4,9 @@
   "description": "Node.js GRPC Note",
   "main": "src/index.ts",
   "scripts": {
-    "start": "NODE_PATH=./src nodemon dist/server/index.js & nodemon dist/client/index.js",
+    "start": "NODE_PATH=dist/ node dist/server/index.js & NODE_PATH=dist/ node dist/client/index.js",
     "build": "make protogen && tsc -p .",
-    "dev": "npm run dev:server & npm run dev:bff",
-    "dev:server": "nodemon src/server/index.ts",
-    "dev:bff": "nodemon src/client/index.ts",
+    "dev": "NODE_PATH=src/ nodemon src/server/index.ts & NODE_PATH=src/ nodemon src/client/index.ts",
     "proto": "./node_modules/.bin/proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=./src/config/types ./src/config/*.proto",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

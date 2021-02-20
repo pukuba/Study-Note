@@ -1,4 +1,4 @@
-OUTPUT=gen
+OUTPUT=src/gen
 NPM_BIN=$(shell npm bin)
 
 GRPC_TOOL=$(NPM_BIN)/grpc_tools_node_protoc

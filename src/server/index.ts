@@ -5,8 +5,8 @@ import {
     ServerUnaryCall,
 } from "@grpc/grpc-js"
 import DB from "config/connectDB"
-import { NoteServiceService } from "../../gen/proto/notes_grpc_pb"
-import notes from "../../gen/proto/notes_pb"
+import { NoteServiceService } from "gen/proto/notes_grpc_pb"
+import notes from "gen/proto/notes_pb"
 
 const req = new notes.NoteList()
 

@@ -1,7 +1,7 @@
-import { Empty } from "../../gen/proto/notes_pb"
-import { NoteServiceClient } from "../../gen/proto/notes_grpc_pb"
+import { Empty } from "gen/proto/notes_pb"
+import { NoteServiceClient } from "gen/proto/notes_grpc_pb"
 import { credentials } from "@grpc/grpc-js"
-import { grpcClientOptions, port } from "../config/env"
+import { grpcClientOptions, port } from "config/env"
 
 const serverURL = `localhost:${port}`
 

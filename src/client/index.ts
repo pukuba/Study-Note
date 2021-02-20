@@ -1,7 +1,7 @@
 import express from "express"
 import { ParamsDictionary } from "express-serve-static-core"
-import { BFFPort } from "../config/env"
-import { list } from "./rpc"
+import { BFFPort } from "config/env"
+import { list } from "client/rpc"
 
 const app = express()
 
