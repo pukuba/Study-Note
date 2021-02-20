@@ -1,8 +1,6 @@
 import {
-    sendUnaryData,
     Server,
     ServerCredentials,
-    ServerUnaryCall,
 } from "@grpc/grpc-js"
 
 import { NoteServiceService } from "gen/proto/notes_grpc_pb"
@@ -14,7 +12,8 @@ const req = new notes.NoteList()
 const server = new Server()
 server.addService(NoteServiceService, {
     list: rpc.list,
-    insert: rpc.insert
+    insert: rpc.insert,
+    update: rpc.update
 })
 
 server.bindAsync('127.0.0.1:50051', ServerCredentials.createInsecure(), (error, port) => {

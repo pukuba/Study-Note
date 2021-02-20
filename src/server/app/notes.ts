@@ -1,13 +1,13 @@
 import {
     sendUnaryData,
-    Server,
-    ServerCredentials,
     ServerUnaryCall
 } from "@grpc/grpc-js"
 
 import DB from "config/connectDB"
-import notes, { Empty, Note, NoteArgs, NoteList } from "gen/proto/notes_pb"
+import { Empty, Note, NoteArgs, NoteList } from "gen/proto/notes_pb"
 import { noteType } from "config/types"
+import { ObjectId } from "mongodb"
+
 export default {
     list: async (call: ServerUnaryCall<Empty, NoteList>, callback: sendUnaryData<NoteList>) => {
         const db = await DB.get()
@@ -29,8 +29,7 @@ export default {
         if (!call.request.getName() || !call.request.getTitle() || !call.request.getContent()) {
             return callback({
                 code: 400,
-                message: "invalid input",
-                details: "invalid input ",
+                message: "invalid input"
             })
         }
         const { _id } = await db.collection("post").insertOne({
@@ -42,6 +41,36 @@ export default {
         resultNote.setContent(call.request.getContent())
         resultNote.setTitle(call.request.getTitle())
         resultNote.setName(call.request.getName())
+        return callback(null, resultNote)
+    },
+    update: async (call: ServerUnaryCall<Note, Note>, callback: sendUnaryData<Note>) => {
+        const db = await DB.get()
+        if (call.request.getId() === undefined) {
+            return callback({
+                code: 400,
+                message: "empty id"
+            })
+        }
+        const resultNote = new Note()
+        const post = await db.collection("post").findOne({ _id: new ObjectId(call.request.getId()) })
+        if (post === null) {
+            return callback({
+                code: 400,
+                message: "not valid id"
+            })
+        }
+        console.log(post)
+        await db.collection("post").updateOne({ _id: post._id }, {
+            $set: {
+                title: call.request.getTitle() || post.title,
+                name: call.request.getName() || post.name,
+                content: call.request.getContent() || post.content
+            }
+        })
+        resultNote.setId(post._id + "")
+        resultNote.setTitle(call.request.getTitle() || post.title)
+        resultNote.setName(call.request.getName() || post.name)
+        resultNote.setContent(call.request.getContent() || post.content)
         return callback(null, resultNote)
     }
 }

@@ -1,7 +1,13 @@
 import { ObjectId } from "mongodb";
 
-export interface noteType {
+export type noteType = {
     _id: ObjectId
+    name: string
+    title: string
+    content: string
+}
+
+export type insertParams = {
     name: string
     title: string
     content: string
@@ -10,5 +16,6 @@ export interface noteType {
 export type noteParams = {
     name: string
     title: string
+    id: string
     content: string
 }

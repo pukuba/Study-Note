@@ -1,8 +1,8 @@
 import express from "express"
 import { ParamsDictionary } from "express-serve-static-core"
 import { BFFPort } from "config/env"
-import { list, insert } from "client/rpc"
-import { noteParams } from "config/types"
+import { list, insert, update } from "client/rpc"
+import { noteParams, noteType } from "config/types"
 import cors from "cors"
 import bodyParser from "body-parser"
 const app = express()
@@ -40,8 +40,29 @@ app.post<ParamsDictionary, any, any, noteParams>(
                 content: req.body.content
             })
             return res.json({ result })
-        } catch (error) {
-            return res.status(500).json({ error })
+        } catch {
+            return res.status(400).json({
+                error: "invalid input"
+            })
+        }
+    }
+)
+
+app.post<ParamsDictionary, any, any, noteType>(
+    "/update",
+    async (req, res) => {
+        try {
+            const result = await update({
+                id: req.body.id,
+                name: req.body.name,
+                title: req.body.title,
+                content: req.body.content
+            })
+            return res.json({ result })
+        } catch {
+            return res.status(400).json({
+                error: "invalid input"
+            })
         }
     }
 )
