@@ -14,7 +14,8 @@ server.addService(NoteServiceService, {
     list: rpc.list,
     insert: rpc.insert,
     update: rpc.update,
-    get: rpc.get
+    get: rpc.get,
+    delete: rpc.delete
 })
 
 server.bindAsync('127.0.0.1:50051', ServerCredentials.createInsecure(), (error, port) => {

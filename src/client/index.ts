@@ -1,8 +1,8 @@
 import express from "express"
 import { ParamsDictionary } from "express-serve-static-core"
 import { BFFPort } from "config/env"
-import { list, insert, update, get } from "client/rpc"
-import { noteParams, noteType } from "config/types"
+import { list, insert, update, get, del } from "client/rpc"
+import { noteParams, noteType, getParams } from "config/types"
 import cors from "cors"
 import bodyParser from "body-parser"
 const app = express()
@@ -25,11 +25,23 @@ app.get<ParamsDictionary, any, any, void>(
     }
 )
 
-app.get<ParamsDictionary, any, any, void>(
-    "/list/:id",
+app.get<ParamsDictionary, any, any, getParams>(
+    "/list",
     async (req, res) => {
         try {
-            const result = await get({ id: req.params.id })
+            const result = await get({ id: req.query.id })
+            return res.json({ result })
+        } catch (error) {
+            return res.status(500).json({ error })
+        }
+    }
+)
+
+app.delete<ParamsDictionary, any, any, getParams>(
+    "/list",
+    async (req, res) => {
+        try {
+            const result = await del({ id: req.query.id })
             return res.json({ result })
         } catch (error) {
             return res.status(500).json({ error })

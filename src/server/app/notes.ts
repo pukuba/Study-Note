@@ -90,5 +90,17 @@ export default {
         resultNote.setName(post.name)
         resultNote.setContent(post.content)
         return callback(null, resultNote)
+    },
+    delete: async (call: ServerUnaryCall<NoteRequestId, Empty>, callback: sendUnaryData<Empty>) => {
+        const db = await DB.get()
+        if (call.request.getId() === undefined) {
+            return callback({
+                code: 400,
+                message: "empty id"
+            })
+        }
+        await db.collection("post").deleteOne({ _id: new ObjectId(call.request.getId()) })
+        const resultNote = new Empty()
+        return callback(null, resultNote)
     }
 }

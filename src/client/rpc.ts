@@ -84,3 +84,20 @@ export const get = ({ id }: getParams) => {
         })
     })
 }
+
+export const del = ({ id }: getParams) => {
+    const note = new NoteRequestId()
+    note.setId(id)
+    return new Promise((resolve, reject) => {
+        Client.delete(note, (error, response) => {
+            if (error || response === undefined) {
+                console.error(error)
+                return reject({
+                    code: error?.code || 500,
+                    message: error?.message || "something went wrong"
+                })
+            }
+            return resolve(response.toObject())
+        })
+    })
+}
