@@ -45,10 +45,10 @@ describe("Update Test", () => {
             req.setId(postsId[0] + "")
             const res = await update(req)
             assert.deepStrictEqual(postsId[0], new ObjectId(res.id))
-            assert.strictEqual(res.name, "pukuba")
-            assert.strictEqual(res.content, "Update Content!")
-            assert.strictEqual(res.title, "mocha test1")
-        })
+            assert.deepStrictEqual(res.name, "pukuba")
+            assert.deepStrictEqual(res.content, "Update Content!")
+            assert.deepStrictEqual(res.title, "mocha test1")
+        }).timeout(10000)
 
         it("Case - 2", async () => {
             const req = new Note()
@@ -58,10 +58,10 @@ describe("Update Test", () => {
             req.setId(postsId[1] + "")
             const res = await update(req)
             assert.deepStrictEqual(postsId[1], new ObjectId(res.id))
-            assert.strictEqual(res.name, "Update Name!")
-            assert.strictEqual(res.content, "Update Content!")
-            assert.strictEqual(res.title, "Update Title!")
-        })
+            assert.deepStrictEqual(res.name, "Update Name!")
+            assert.deepStrictEqual(res.content, "Update Content!")
+            assert.deepStrictEqual(res.title, "Update Title!")
+        }).timeout(10000)
     })
 
     describe("Update Failure", () => {
@@ -71,10 +71,10 @@ describe("Update Test", () => {
             try {
                 await update(req)
             } catch (e) {
-                assert.strictEqual(e.code, 2)
-                assert.strictEqual(e.message, "2 UNKNOWN: ID not valid")
+                assert.deepStrictEqual(e.code, 2)
+                assert.deepStrictEqual(e.message, "2 UNKNOWN: ID not valid")
             }
-        })
+        }).timeout(10000)
 
         it("Case - 2", async () => {
             const req = new Note()
@@ -82,17 +82,17 @@ describe("Update Test", () => {
             try {
                 await update(req)
             } catch (e) {
-                assert.strictEqual(e.code, 2)
-                assert.strictEqual(e.message, "2 UNKNOWN: ID not valid")
+                assert.deepStrictEqual(e.code, 2)
+                assert.deepStrictEqual(e.message, "2 UNKNOWN: ID not valid")
             }
-        })
+        }).timeout(10000)
         it("Case - 3", async () => {
             try {
                 await update(new Note())
             } catch (e) {
-                assert.strictEqual(e.code, 2)
-                assert.strictEqual(e.message, "2 UNKNOWN: ID not valid")
+                assert.deepStrictEqual(e.code, 2)
+                assert.deepStrictEqual(e.message, "2 UNKNOWN: ID not valid")
             }
-        })
+        }).timeout(10000)
     })
 })

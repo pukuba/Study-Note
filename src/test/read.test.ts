@@ -71,7 +71,7 @@ describe(`Read Test`, () => {
                 }
             })
             assert.deepStrictEqual(dbRes, resArr)
-        })
+        }).timeout(10000)
 
         it("Case - 2", async () => {
             const db = await DB.get()
@@ -83,7 +83,7 @@ describe(`Read Test`, () => {
             assert.strictEqual(res.name, dbRes.name)
             assert.strictEqual(res.title, dbRes.title)
             assert.strictEqual(res.content, dbRes.content)
-        })
+        }).timeout(10000)
     })
 
     describe("Read Failure", () => {
@@ -92,10 +92,10 @@ describe(`Read Test`, () => {
             try {
                 await get(req)
             } catch (e) {
-                assert.strictEqual(e.code, 2)
-                assert.strictEqual(e.message, "2 UNKNOWN: ID not valid")
+                assert.deepStrictEqual(e.code, 2)
+                assert.deepStrictEqual(e.message, "2 UNKNOWN: ID not valid")
             }
-        })
+        }).timeout(10000)
 
         it("Case - 2", async () => {
             const req = new NoteRequestId()
@@ -103,10 +103,10 @@ describe(`Read Test`, () => {
             try {
                 await get(req)
             } catch (e) {
-                assert.strictEqual(e.code, 2)
-                assert.strictEqual(e.message, "2 UNKNOWN: ID not valid")
+                assert.deepStrictEqual(e.code, 2)
+                assert.deepStrictEqual(e.message, "2 UNKNOWN: ID not valid")
             }
-        })
+        }).timeout(10000)
 
         it("Case - 3", async () => {
             const req = new NoteRequestId()
@@ -114,9 +114,9 @@ describe(`Read Test`, () => {
             try {
                 await get(req)
             } catch (e) {
-                assert.strictEqual(e.code, 2)
-                assert.strictEqual(e.message, "2 UNKNOWN: ID not valid")
+                assert.deepStrictEqual(e.code, 2)
+                assert.deepStrictEqual(e.message, "2 UNKNOWN: ID not valid")
             }
-        })
+        }).timeout(10000)
     })
 })

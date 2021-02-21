@@ -45,8 +45,8 @@ describe("Delete Test", () => {
             res.setId(postsId[0] + "")
             await del(res)
             const dbResult = await db.collection("post").findOne({ _id: postsId[0] })
-            assert.strictEqual(dbResult, null)
-        })
+            assert.deepStrictEqual(dbResult, null)
+        }).timeout(10000)
 
         it("Case - 2", async () => {
             const db = await DB.get()
@@ -54,8 +54,8 @@ describe("Delete Test", () => {
             res.setId(postsId[1] + "")
             await del(res)
             const dbResult = await db.collection("post").findOne({ _id: postsId[1] })
-            assert.strictEqual(dbResult, null)
-        })
+            assert.deepStrictEqual(dbResult, null)
+        }).timeout(10000)
     })
 
     describe("Delete Failure", () => {
@@ -65,10 +65,10 @@ describe("Delete Test", () => {
             try {
                 await del(res)
             } catch (e) {
-                assert.strictEqual(e.code, 2)
-                assert.strictEqual(e.message, "2 UNKNOWN: ID not valid")
+                assert.deepStrictEqual(e.code, 2)
+                assert.deepStrictEqual(e.message, "2 UNKNOWN: ID not valid")
             }
-        })
+        }).timeout(10000)
 
         it("Case - 2", async () => {
             const res = new NoteRequestId()
@@ -76,9 +76,9 @@ describe("Delete Test", () => {
             try {
                 await del(res)
             } catch (e) {
-                assert.strictEqual(e.code, 2)
-                assert.strictEqual(e.message, "2 UNKNOWN: ID not valid")
+                assert.deepStrictEqual(e.code, 2)
+                assert.deepStrictEqual(e.message, "2 UNKNOWN: ID not valid")
             }
-        })
+        }).timeout(10000)
     })
 })

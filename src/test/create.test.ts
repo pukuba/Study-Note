@@ -37,11 +37,11 @@ describe(`Create Test`, () => {
             note.setName("erolf0123")
             note.setTitle("test title1")
             const result = await insert(note)
-            assert.strict(result.name, "erolf0123")
-            assert.strict(result.title, "test title1")
-            assert.strict(result.content, "test Note1")
+            assert.deepStrictEqual(result.name, "erolf0123")
+            assert.deepStrictEqual(result.title, "test title1")
+            assert.deepStrictEqual(result.content, "test Note1")
             await db.collection("post").deleteOne({ _id: new ObjectID(result.id) })
-        })
+        }).timeout(10000)
         it(`Case - 2`, async () => {
             const db = await DB.get()
             const note = new NoteArgs()
@@ -49,11 +49,11 @@ describe(`Create Test`, () => {
             note.setName("pukuba")
             note.setTitle("test title2")
             const result = await insert(note)
-            assert.strict(result.name, "pukuba")
-            assert.strict(result.title, "test title2")
-            assert.strict(result.content, "test Note2")
+            assert.deepStrictEqual(result.name, "pukuba")
+            assert.deepStrictEqual(result.title, "test title2")
+            assert.deepStrictEqual(result.content, "test Note2")
             await db.collection("post").deleteOne({ _id: new ObjectID(result.id) })
-        })
+        }).timeout(10000)
     })
 
     describe(`Create Failure`, async () => {
@@ -63,10 +63,10 @@ describe(`Create Test`, () => {
             try {
                 await insert(note)
             } catch (e) {
-                assert.strictEqual(e.code, 2)
-                assert.strictEqual(e.message, "2 UNKNOWN: invalid input")
+                assert.deepStrictEqual(e.code, 2)
+                assert.deepStrictEqual(e.message, "2 UNKNOWN: invalid input")
             }
-        })
+        }).timeout(10000)
 
         it(`Case - 2`, async () => {
             const note = new NoteArgs()
@@ -76,9 +76,9 @@ describe(`Create Test`, () => {
             try {
                 await insert(note)
             } catch (e) {
-                assert.strictEqual(e.code, 2)
-                assert.strictEqual(e.message, "2 UNKNOWN: invalid input")
+                assert.deepStrictEqual(e.code, 2)
+                assert.deepStrictEqual(e.message, "2 UNKNOWN: invalid input")
             }
-        })
+        }).timeout(10000)
     })
 })

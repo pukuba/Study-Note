@@ -2,7 +2,8 @@ import {
     Server,
     ServerCredentials,
 } from "@grpc/grpc-js"
-
+import dotenv from "dotenv"
+dotenv.config()
 import { NoteServiceService } from "gen/proto/notes_grpc_pb"
 import rpc from "server/app/notes"
 import notes from "gen/proto/notes_pb"

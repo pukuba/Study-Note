@@ -1,6 +1,5 @@
 import env from "config/env"
 import { MongoClient, Db } from "mongodb"
-import { ExitStatus } from "typescript"
 
 let db: Db | null = null
 let instance: number = 0
