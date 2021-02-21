@@ -8,7 +8,7 @@
     "build": "make protogen && tsc -p .",
     "dev": "NODE_PATH=src/ nodemon src/server/index.ts & NODE_PATH=src/ nodemon src/client/index.ts",
     "del": "pm2 ls",
-    "test": "pm2 install typescript && NODE_PATH=src/ pm2 start src/server/index.ts && sleep 5 && NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/TEST/*.test.ts --exit",
+    "test": "pm2 install typescript && NODE_PATH=src/ pm2 start src/server/index.ts && sleep 5 && NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/TEST/*.test.ts --exit && pm2 delete all",
     "test1": "NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/TEST/*.test.ts --exit"
   },
   "repository": {

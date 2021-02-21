@@ -80,10 +80,18 @@ export default {
         return callback(null, resultNote)
     },
     get: async (call: ServerUnaryCall<NoteRequestId, Note>, callback: sendUnaryData<Note>) => {
-        if (call.request.getId() === undefined) {
+        if (call.request.getId() === undefined || call.request.toArray().length === 0) {
             return callback({
                 code: 400,
-                message: "empty id"
+                message: "ID empty"
+            })
+        }
+        try {
+            new ObjectId(call.request.getId())
+        } catch {
+            return callback({
+                code: 400,
+                message: "ObjectID not valid"
             })
         }
         const db = await DB.get()
@@ -91,7 +99,7 @@ export default {
         if (dbResult === null) {
             return callback({
                 code: 400,
-                message: "not valid id"
+                message: "ID not valid"
             })
         }
         const resultNote = new Note()
