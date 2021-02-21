@@ -4,14 +4,10 @@ import assert from "assert"
 import { grpcClientOptions, port } from "config/env"
 import { Note, NoteArgs } from "gen/proto/notes_pb"
 import DB from "config/connectDB"
-import { delay } from "lib"
 import { ObjectID } from "mongodb"
 describe(`Create Test`, () => {
     let client: NoteServiceClient
     let insert: Function
-    it(`Server wait`, async () => {
-        await delay(5000)
-    }).timeout(50505)
     before(async () => {
         client = new NoteServiceClient(
             `localhost:${port}`,
