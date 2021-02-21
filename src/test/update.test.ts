@@ -2,10 +2,9 @@ import { NoteServiceClient } from "gen/proto/notes_grpc_pb"
 import { credentials } from "@grpc/grpc-js"
 import assert from "assert"
 import { grpcClientOptions, port } from "config/env"
-import { Empty, NoteRequestId } from "gen/proto/notes_pb"
+import { Note } from "gen/proto/notes_pb"
 import DB from "config/connectDB"
 import { ObjectId } from "mongodb"
-import { noteParams } from "config/types"
 
 const mockPost = [
     {
@@ -25,10 +24,9 @@ const mockPost = [
     },
 ]
 
-describe(`Read Test`, () => {
+describe("Update Test", () => {
     let client: NoteServiceClient
-    let list: Function
-    let get: Function
+    let update: Function
     const postsId: ObjectId[] = []
     before(async () => {
         const db = await DB.get()
@@ -39,22 +37,9 @@ describe(`Read Test`, () => {
             credentials.createInsecure(),
             grpcClientOptions
         )
-        list = (empty: Empty) => {
+        update = (note: Note) => {
             return new Promise((resolve, reject) => {
-                client.list(empty, (error, response) => {
-                    if (error) {
-                        reject({
-                            code: error?.code || 500,
-                            message: error?.message || "something went wrong",
-                        })
-                    }
-                    return resolve(response.toObject())
-                })
-            })
-        }
-        get = (note: NoteRequestId) => {
-            return new Promise((resolve, reject) => {
-                client.get(note, (error, response) => {
+                client.update(note, (error, response) => {
                     if (error || response === undefined) {
                         return reject({
                             code: error?.code || 500,
@@ -66,48 +51,42 @@ describe(`Read Test`, () => {
             })
         }
     })
-
     after(async () => {
         const db = await DB.get()
-        for (const _id of postsId) {
-            await db.collection("post").deleteOne({ _id })
-        }
+        await db.collection("post").deleteMany({})
     })
-
-    describe("Read Success", () => {
+    describe("Update Success", () => {
         it("Case - 1", async () => {
-            const db = await DB.get()
-            const res = await list(new Empty())
-            const dbRes = await db.collection("post").find().toArray()
-            const resArr = res.notesList.map((note: noteParams) => {
-                return {
-                    _id: new ObjectId(note.id),
-                    title: note.title,
-                    content: note.content,
-                    name: note.name
-                }
-            })
-            assert.deepStrictEqual(dbRes, resArr)
-        })
-
-        it("Case - 2", async () => {
-            const db = await DB.get()
-            const req = new NoteRequestId()
+            const req = new Note()
+            req.setContent("Update Content!")
             req.setId(postsId[0] + "")
-            const res = await get(req)
-            const dbRes = await db.collection("post").findOne({ _id: new ObjectId(res.id) })
-            assert.deepStrictEqual(new ObjectId(res.id), dbRes._id)
-            assert.strictEqual(res.name, dbRes.name)
-            assert.strictEqual(res.title, dbRes.title)
-            assert.strictEqual(res.content, dbRes.content)
+            const res = await update(req)
+            assert.deepStrictEqual(postsId[0], new ObjectId(res.id))
+            assert.strictEqual(res.name, "pukuba")
+            assert.strictEqual(res.content, "Update Content!")
+            assert.strictEqual(res.title, "mocha test1")
+        })
+
+        it("Case - 2", async () => {
+            const req = new Note()
+            req.setContent("Update Content!")
+            req.setTitle("Update Title!")
+            req.setName("Update Name!")
+            req.setId(postsId[1] + "")
+            const res = await update(req)
+            assert.deepStrictEqual(postsId[1], new ObjectId(res.id))
+            assert.strictEqual(res.name, "Update Name!")
+            assert.strictEqual(res.content, "Update Content!")
+            assert.strictEqual(res.title, "Update Title!")
         })
     })
 
-    describe("Read Failure", () => {
+    describe("Update Failure", () => {
         it("Case - 1", async () => {
-            const req = new NoteRequestId()
+            const req = new Note()
+            req.setName("Nam-Seung-Won")
             try {
-                await get(req)
+                await update(req)
             } catch (e) {
                 assert.strictEqual(e.code, 2)
                 assert.strictEqual(e.message, "2 UNKNOWN: ID not valid")
@@ -115,21 +94,18 @@ describe(`Read Test`, () => {
         })
 
         it("Case - 2", async () => {
-            const req = new NoteRequestId()
-            req.setId("erolf0123")
+            const req = new Note()
+            req.setId("erolf0123,pukuba,kkzkk1234")
             try {
-                await get(req)
+                await update(req)
             } catch (e) {
                 assert.strictEqual(e.code, 2)
                 assert.strictEqual(e.message, "2 UNKNOWN: ID not valid")
             }
         })
-
         it("Case - 3", async () => {
-            const req = new NoteRequestId()
-            req.setId("eeeeeeeeeeee")
             try {
-                await get(req)
+                await update(new Note())
             } catch (e) {
                 assert.strictEqual(e.code, 2)
                 assert.strictEqual(e.message, "2 UNKNOWN: ID not valid")
