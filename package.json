@@ -5,11 +5,10 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "NODE_PATH=dist/ node dist/server/index.js & NODE_PATH=dist/ node dist/client/index.js",
-    "build": "make protogen && tsc -p .",
+    "build": "tsc -p .",
+    "protogen": "make protogen",
     "dev": "NODE_PATH=src/ nodemon src/server/index.ts & NODE_PATH=src/ nodemon src/client/index.ts",
-    "del": "pm2 ls",
-    "test": "pm2 install typescript && NODE_PATH=src/ pm2 start src/server/index.ts && sleep 5 && NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/TEST/*.test.ts --exit && pm2 delete all",
-    "test1": "NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/TEST/*.test.ts --exit"
+    "test": "pm2 install typescript && sleep 3 && NODE_PATH=src/ pm2 start src/server/index.ts && sleep 5 && NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/TEST/*.test.ts --exit && pm2 delete all"
   },
   "repository": {
     "type": "git",
@@ -27,6 +26,7 @@
     "@types/express": "^4.17.11",
     "@types/mocha": "^8.2.1",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "google-protobuf": "^3.15.0",
     "grpc-tools": "^1.10.0",
