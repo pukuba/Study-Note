@@ -9,7 +9,7 @@ import { noteType } from "config/types"
 import { ObjectId } from "mongodb"
 
 const isValidInsert = (call: ServerUnaryCall<NoteArgs, Note>) => {
-    if (!call.request.getName() || !call.request.getTitle() || !call.request.getContent()) {
+    if (call.request.toArray().filter(e => e).length !== 3) {
         return false
     }
     return true
@@ -39,12 +39,12 @@ export default {
         }
         const db = await DB.get()
         const resultNote = new Note()
-        const { _id } = await db.collection("post").insertOne({
+        const { insertedId } = await db.collection("post").insertOne({
             name: call.request.getName(),
             title: call.request.getTitle(),
             content: call.request.getContent()
         })
-        resultNote.setId(_id)
+        resultNote.setId(insertedId + "")
         resultNote.setContent(call.request.getContent())
         resultNote.setTitle(call.request.getTitle())
         resultNote.setName(call.request.getName())

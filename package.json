@@ -7,8 +7,9 @@
     "start": "NODE_PATH=dist/ node dist/server/index.js & NODE_PATH=dist/ node dist/client/index.js",
     "build": "make protogen && tsc -p .",
     "dev": "NODE_PATH=src/ nodemon src/server/index.ts & NODE_PATH=src/ nodemon src/client/index.ts",
-    "proto": "./node_modules/.bin/proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=./src/config/types ./src/config/*.proto",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "del": "pm2 ls",
+    "test": "pm2 install typescript && NODE_PATH=src/ pm2 start src/server/index.ts && NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/TEST/*.test.ts --exit",
+    "test1": "NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/TEST/*.test.ts --exit"
   },
   "repository": {
     "type": "git",
@@ -24,13 +25,17 @@
     "@grpc/grpc-js": "^1.2.8",
     "@types/cors": "^2.8.10",
     "@types/express": "^4.17.11",
+    "@types/mocha": "^8.2.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "google-protobuf": "^3.15.0",
     "grpc-tools": "^1.10.0",
     "grpc_tools_node_protoc_ts": "^5.0.1",
+    "mocha": "^8.3.0",
     "mongodb": "^3.6.4",
     "nodemon": "^2.0.7",
+    "pm2": "^4.5.4",
+    "ts-mocha": "^8.0.0",
     "typescript": "^4.1.5"
   },
   "devDependencies": {

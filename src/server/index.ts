@@ -24,5 +24,5 @@ server.bindAsync('127.0.0.1:50051', ServerCredentials.createInsecure(), (error, 
     }
 
     server.start()
-    console.log(`server start listing on port http://localhost:${port}`)
+    console.log(`server start listing on port localhost:${port}`)
 })
