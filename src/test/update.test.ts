@@ -62,6 +62,19 @@ describe("Update Test", () => {
             assert.deepStrictEqual(res.content, "Update Content!")
             assert.deepStrictEqual(res.title, "Update Title!")
         }).timeout(10000)
+
+        it("Case - 3", async () => {
+            const req = new Note()
+            req.setContent("1")
+            req.setTitle("2")
+            req.setName("3")
+            req.setId(postsId[2] + "")
+            const res = await update(req)
+            assert.deepStrictEqual(postsId[2], new ObjectId(res.id))
+            assert.deepStrictEqual(res.name, "3")
+            assert.deepStrictEqual(res.content, "1")
+            assert.deepStrictEqual(res.title, "2")
+        }).timeout(10000)
     })
 
     describe("Update Failure", () => {
@@ -94,5 +107,17 @@ describe("Update Test", () => {
                 assert.deepStrictEqual(e.message, "2 UNKNOWN: ID not valid")
             }
         }).timeout(10000)
+        it("Case - 4", async () => {
+            const req = new Note()
+            req.setId(postsId[0] + "")
+            req.setName("")
+            req.setTitle("")
+            req.setContent("")
+            const res = await update(req)
+            assert.deepStrictEqual(new ObjectId(res.id), postsId[0])
+            assert.notDeepStrictEqual(res.name, "")
+            assert.notDeepStrictEqual(res.content, "")
+            assert.notDeepStrictEqual(res.title, "")
+        })
     })
 })
