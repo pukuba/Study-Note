@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  proxy:
+    image: nginx:latest
+    container_name: proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf
+    restart: "unless-stopped"
+  grpc_server:
+    container_name: grpc_server
+    ports:
+      - "50051:50051"
+      - "9000:9000"
+    build:
+      context: ./
+    restart: "unless-stopped"
