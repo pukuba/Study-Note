@@ -1,5 +1,6 @@
 import env from "config/env"
 import { MongoClient, Db } from "mongodb"
+import { ExitStatus } from "typescript"
 
 let db: Db | null = null
 let instance: number = 0
@@ -18,7 +19,7 @@ const connectDB = () => {
             return _db
         } catch (e) {
             console.log(e)
-            return e
+            return null
         }
     }
 

@@ -8,30 +8,37 @@ import { Empty, Note, NoteArgs, NoteList, NoteRequestId } from "gen/proto/notes_
 import { noteType } from "config/types"
 import { ObjectId } from "mongodb"
 
+const isValidInsert = (call: ServerUnaryCall<NoteArgs, Note>) => {
+    if (!call.request.getName() || !call.request.getTitle() || !call.request.getContent()) {
+        return false
+    }
+    return true
+}
+
 export default {
     list: async (call: ServerUnaryCall<Empty, NoteList>, callback: sendUnaryData<NoteList>) => {
         const db = await DB.get()
-        const result = await db.collection("post").find().toArray()
+        const dbResult = await db.collection("post").find().toArray()
         const resultNotes = new NoteList()
-        result.forEach((x: noteType) => {
-            const res = new Note()
-            res.setId(x._id + "")
-            res.setName(x.name)
-            res.setTitle(x.title)
-            res.setContent(x.content)
-            resultNotes.addNotes(res)
+        dbResult.forEach((x: noteType) => {
+            const resultNote = new Note()
+            resultNote.setId(x._id + "")
+            resultNote.setName(x.name)
+            resultNote.setTitle(x.title)
+            resultNote.setContent(x.content)
+            resultNotes.addNotes(resultNote)
         })
         return callback(null, resultNotes)
     },
     insert: async (call: ServerUnaryCall<NoteArgs, Note>, callback: sendUnaryData<Note>) => {
-        const db = await DB.get()
-        const resultNote = new Note()
-        if (!call.request.getName() || !call.request.getTitle() || !call.request.getContent()) {
+        if (isValidInsert(call) === false) {
             return callback({
                 code: 400,
                 message: "invalid input"
             })
         }
+        const db = await DB.get()
+        const resultNote = new Note()
         const { _id } = await db.collection("post").insertOne({
             name: call.request.getName(),
             title: call.request.getTitle(),
@@ -44,63 +51,65 @@ export default {
         return callback(null, resultNote)
     },
     update: async (call: ServerUnaryCall<Note, Note>, callback: sendUnaryData<Note>) => {
-        const db = await DB.get()
         if (call.request.getId() === undefined) {
             return callback({
                 code: 400,
                 message: "empty id"
             })
         }
-        const resultNote = new Note()
-        const post = await db.collection("post").findOne({ _id: new ObjectId(call.request.getId()) })
-        if (post === null) {
+        const db = await DB.get()
+        const dbResult = await db.collection("post").findOne({ _id: new ObjectId(call.request.getId()) })
+        if (dbResult === null) {
             return callback({
                 code: 400,
                 message: "not valid id"
             })
         }
-        await db.collection("post").updateOne({ _id: post._id }, {
+        const resultNote = new Note()
+        await db.collection("post").updateOne({ _id: dbResult._id }, {
             $set: {
-                title: call.request.getTitle() || post.title,
-                name: call.request.getName() || post.name,
-                content: call.request.getContent() || post.content
+                title: call.request.getTitle() || dbResult.title,
+                name: call.request.getName() || dbResult.name,
+                content: call.request.getContent() || dbResult.content
             }
         })
-        resultNote.setId(post._id + "")
-        resultNote.setTitle(call.request.getTitle() || post.title)
-        resultNote.setName(call.request.getName() || post.name)
-        resultNote.setContent(call.request.getContent() || post.content)
+        resultNote.setId(dbResult._id + "")
+        resultNote.setTitle(call.request.getTitle() || dbResult.title)
+        resultNote.setName(call.request.getName() || dbResult.name)
+        resultNote.setContent(call.request.getContent() || dbResult.content)
         return callback(null, resultNote)
     },
     get: async (call: ServerUnaryCall<NoteRequestId, Note>, callback: sendUnaryData<Note>) => {
-        const db = await DB.get()
         if (call.request.getId() === undefined) {
             return callback({
                 code: 400,
                 message: "empty id"
             })
         }
-        const post = await db.collection("post").findOne({ _id: new ObjectId(call.request.getId()) })
-        const resultNote = new Note()
-        if (post === null) {
-            return callback(null, resultNote)
+        const db = await DB.get()
+        const dbResult = await db.collection("post").findOne({ _id: new ObjectId(call.request.getId()) })
+        if (dbResult === null) {
+            return callback({
+                code: 400,
+                message: "not valid id"
+            })
         }
-        resultNote.setId(post._id + "")
-        resultNote.setTitle(post.title)
-        resultNote.setName(post.name)
-        resultNote.setContent(post.content)
+        const resultNote = new Note()
+        resultNote.setId(dbResult._id + "")
+        resultNote.setTitle(dbResult.title)
+        resultNote.setName(dbResult.name)
+        resultNote.setContent(dbResult.content)
         return callback(null, resultNote)
     },
     delete: async (call: ServerUnaryCall<NoteRequestId, Empty>, callback: sendUnaryData<Empty>) => {
-        const db = await DB.get()
         if (call.request.getId() === undefined) {
             return callback({
                 code: 400,
                 message: "empty id"
             })
         }
+        const db = await DB.get()
         await db.collection("post").deleteOne({ _id: new ObjectId(call.request.getId()) })
-        const resultNote = new Empty()
-        return callback(null, resultNote)
+        return callback(null, new Empty())
     }
 }
