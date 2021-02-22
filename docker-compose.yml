@@ -1,6 +1,15 @@
 version: "3.8"
 
 services:
+  grpc_db:
+    image: mongo:latest
+    container_name: grpc_db
+    expose:
+      - "27017"
+    volumes:
+      - /usr/local/var/mongodb:/data/db
+    restart: "unless-stopped"
+
   proxy:
     image: nginx:latest
     container_name: proxy
@@ -9,6 +18,7 @@ services:
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/nginx.conf
     restart: "unless-stopped"
+
   grpc_server:
     container_name: grpc_server
     expose:
