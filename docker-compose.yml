@@ -11,9 +11,10 @@ services:
     restart: "unless-stopped"
   grpc_server:
     container_name: grpc_server
+    expose:
+      - "9000"
     ports:
       - "50051:50051"
-      - "9000:9000"
     build:
       context: ./
     restart: "unless-stopped"

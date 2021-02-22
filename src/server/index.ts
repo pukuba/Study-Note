@@ -6,9 +6,6 @@ import dotenv from "dotenv"
 dotenv.config()
 import { NoteServiceService } from "gen/proto/notes_grpc_pb"
 import rpc from "server/app/notes"
-import notes from "gen/proto/notes_pb"
-
-const req = new notes.NoteList()
 
 const server = new Server()
 server.addService(NoteServiceService, {

@@ -5,10 +5,12 @@ import { list, insert, update, get, del } from "client/rpc"
 import { noteParams, noteType, getParams } from "config/types"
 import cors from "cors"
 import bodyParser from "body-parser"
+
 const app = express()
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+
 app.get("/", ({ }, res) => {
     res.json({ health: "ok" })
 })

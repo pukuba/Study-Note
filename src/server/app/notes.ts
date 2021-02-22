@@ -18,17 +18,17 @@ const isValidInsert = (call: ServerUnaryCall<NoteArgs, Note>) => {
 export default {
     list: async (call: ServerUnaryCall<Empty, NoteList>, callback: sendUnaryData<NoteList>) => {
         const db = await DB.get()
-        const dbResult = await db.collection("post").find().toArray()
-        const resultNotes = new NoteList()
-        dbResult.forEach((x: noteType) => {
-            const resultNote = new Note()
-            resultNote.setId(x._id + "")
-            resultNote.setName(x.name)
-            resultNote.setTitle(x.title)
-            resultNote.setContent(x.content)
-            resultNotes.addNotes(resultNote)
+        const posts = await db.collection("post").find().toArray()
+        const response = new NoteList()
+        posts.forEach((x: noteType) => {
+            const loopNote = new Note()
+            loopNote.setId(x._id + "")
+            loopNote.setName(x.name)
+            loopNote.setTitle(x.title)
+            loopNote.setContent(x.content)
+            response.addNotes(loopNote)
         })
-        return callback(null, resultNotes)
+        return callback(null, response)
     },
     insert: async (call: ServerUnaryCall<NoteArgs, Note>, callback: sendUnaryData<Note>) => {
         if (isValidInsert(call) === false) {
@@ -38,17 +38,17 @@ export default {
             })
         }
         const db = await DB.get()
-        const resultNote = new Note()
+        const response = new Note()
         const { insertedId } = await db.collection("post").insertOne({
             name: call.request.getName(),
             title: call.request.getTitle(),
             content: call.request.getContent()
         })
-        resultNote.setId(insertedId + "")
-        resultNote.setContent(call.request.getContent())
-        resultNote.setTitle(call.request.getTitle())
-        resultNote.setName(call.request.getName())
-        return callback(null, resultNote)
+        response.setId(insertedId + "")
+        response.setContent(call.request.getContent())
+        response.setTitle(call.request.getTitle())
+        response.setName(call.request.getName())
+        return callback(null, response)
     },
     update: async (call: ServerUnaryCall<Note, Note>, callback: sendUnaryData<Note>) => {
         const db = await DB.get()
@@ -61,12 +61,12 @@ export default {
                     content: call.request.getContent() || dbResult.content
                 }
             })
-            const resultNote = new Note()
-            resultNote.setId(dbResult._id + "")
-            resultNote.setTitle(call.request.getTitle() || dbResult.title)
-            resultNote.setName(call.request.getName() || dbResult.name)
-            resultNote.setContent(call.request.getContent() || dbResult.content)
-            return callback(null, resultNote)
+            const response = new Note()
+            response.setId(dbResult._id + "")
+            response.setTitle(call.request.getTitle() || dbResult.title)
+            response.setName(call.request.getName() || dbResult.name)
+            response.setContent(call.request.getContent() || dbResult.content)
+            return callback(null, response)
         } catch {
             return callback({
                 code: 400,
@@ -78,12 +78,12 @@ export default {
         const db = await DB.get()
         try {
             const dbResult = await db.collection("post").findOne({ _id: new ObjectId(call.request.getId()) })
-            const resultNote = new Note()
-            resultNote.setId(dbResult._id + "")
-            resultNote.setTitle(dbResult.title)
-            resultNote.setName(dbResult.name)
-            resultNote.setContent(dbResult.content)
-            return callback(null, resultNote)
+            const response = new Note()
+            response.setId(dbResult._id + "")
+            response.setTitle(dbResult.title)
+            response.setName(dbResult.name)
+            response.setContent(dbResult.content)
+            return callback(null, response)
         } catch {
             return callback({
                 code: 400,
@@ -95,7 +95,8 @@ export default {
         const db = await DB.get()
         try {
             await db.collection("post").deleteOne({ _id: new ObjectId(call.request.getId()) })
-            return callback(null, new Empty())
+            const response = new Empty()
+            return callback(null, response)
         } catch {
             return callback({
                 code: 400,

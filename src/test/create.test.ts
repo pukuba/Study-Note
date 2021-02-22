@@ -4,7 +4,6 @@ import assert from "assert"
 import { grpcClientOptions, port } from "config/env"
 import { Note, NoteArgs } from "gen/proto/notes_pb"
 import DB from "config/connectDB"
-import { ObjectID } from "mongodb"
 
 describe(`Create Test`, () => {
     let client: NoteServiceClient
@@ -29,9 +28,14 @@ describe(`Create Test`, () => {
             })
         }
     })
+
+    after(async () => {
+        const db = await DB.get()
+        await db.collection("post").deleteMany({})
+    })
+
     describe(`Create Success`, () => {
         it(`Case - 1`, async () => {
-            const db = await DB.get()
             const note = new NoteArgs()
             note.setContent("test Note1")
             note.setName("erolf0123")
@@ -40,10 +44,8 @@ describe(`Create Test`, () => {
             assert.deepStrictEqual(result.name, "erolf0123")
             assert.deepStrictEqual(result.title, "test title1")
             assert.deepStrictEqual(result.content, "test Note1")
-            await db.collection("post").deleteOne({ _id: new ObjectID(result.id) })
         }).timeout(10000)
         it(`Case - 2`, async () => {
-            const db = await DB.get()
             const note = new NoteArgs()
             note.setContent("test Note2")
             note.setName("pukuba")
@@ -52,7 +54,6 @@ describe(`Create Test`, () => {
             assert.deepStrictEqual(result.name, "pukuba")
             assert.deepStrictEqual(result.title, "test title2")
             assert.deepStrictEqual(result.content, "test Note2")
-            await db.collection("post").deleteOne({ _id: new ObjectID(result.id) })
         }).timeout(10000)
     })
 

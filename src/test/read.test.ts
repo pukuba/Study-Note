@@ -52,9 +52,7 @@ describe(`Read Test`, () => {
 
     after(async () => {
         const db = await DB.get()
-        for (const _id of postsId) {
-            await db.collection("post").deleteOne({ _id })
-        }
+        await db.collection("post").deleteMany({})
     })
 
     describe("Read Success", () => {

@@ -3,7 +3,7 @@ import { NoteServiceClient } from "gen/proto/notes_grpc_pb"
 import { credentials } from "@grpc/grpc-js"
 import { grpcClientOptions, port } from "config/env"
 import { insertParams, noteParams, getParams } from "config/types"
-const serverURL = `localhost:80`
+const serverURL = `localhost:${port}`
 
 const empty = new Empty()
 const Client = new NoteServiceClient(
